@@ -1,7 +1,8 @@
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "https://prodesk-capstone-taskmatrix-1-4ge3.onrender.com/api"
+  //baseURL: "https://prodesk-capstone-taskmatrix-1-4ge3.onrender.com/api"
+  baseURL: "http://localhost:5000/api"
 });
 
 // 🔐 Automatically attach token to every request
