@@ -10,7 +10,7 @@ app.use(express.json());
 
 // 🔥 CORS FIX (IMPORTANT)
 app.use(cors({
-  origin: "https://prodesk-capstone-taskmatrix-five.vercel.app", // 👉 apna frontend link
+  origin: "https://prodesk-capstone-taskmatrix-omega.vercel.app/", // 👉 apna frontend link
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
