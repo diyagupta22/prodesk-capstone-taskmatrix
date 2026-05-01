@@ -18,23 +18,50 @@ export default function Dashboard() {
 
   // 📥 Fetch tasks
   const fetchTasks = async () => {
-    const res = await API.get("/tasks");
-    setTasks(res.data);
+    try {
+      const res = await API.get("/tasks");
+      setTasks(res.data);
+    } catch (err) {
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else {
+        alert("Error fetching tasks ❌");
+      }
+    }
   };
 
   // ➕ Add task
   const addTask = async () => {
     if (!title.trim()) return;
 
-    const res = await API.post("/tasks", { title });
-    setTasks([...tasks, res.data]);
-    setTitle("");
+    try {
+      const res = await API.post("/tasks", { title });
+      setTasks([...tasks, res.data]);
+      setTitle("");
+    } catch (err) {
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else {
+        alert("Error adding task ❌");
+      }
+    }
   };
 
   // ❌ Delete task
   const deleteTask = async (id) => {
-    await API.delete(`/tasks/${id}`);
-    setTasks(tasks.filter((t) => t._id !== id));
+    try {
+      await API.delete(`/tasks/${id}`);
+      setTasks(tasks.filter((t) => t._id !== id));
+    } catch (err) {
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else {
+        alert("Error deleting task ❌");
+      }
+    }
   };
 
   // 💳 Stripe Payment
@@ -43,7 +70,12 @@ export default function Dashboard() {
       const res = await API.post("/payment/checkout");
       window.location.href = res.data.url;
     } catch (err) {
-      alert("Payment error ❌");
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else {
+        alert("Payment error ❌");
+      }
     }
   };
 

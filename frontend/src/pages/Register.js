@@ -12,13 +12,17 @@ export default function Register() {
     try {
       await API.post("/auth/register", data);
       alert("Registered ✅");
+
+      // redirect to login
+      window.location.href = "/login";
     } catch (err) {
-      alert("Error ❌");
+      const errorMsg = err.response?.data?.error || "Registration failed ❌";
+      alert(errorMsg);
     }
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Register</h2>
 
       <input
@@ -26,24 +30,33 @@ export default function Register() {
         onChange={(e) => setData({ ...data, name: e.target.value })}
       />
 
-      <br /><br />
-
       <input
         placeholder="Email"
         onChange={(e) => setData({ ...data, email: e.target.value })}
       />
 
-      <br /><br />
-
       <input
-        placeholder="Password"
         type="password"
+        placeholder="Password"
         onChange={(e) => setData({ ...data, password: e.target.value })}
       />
 
-      <br /><br />
-
       <button onClick={handleSubmit}>Register</button>
+
+      {/* Login link */}
+      <p style={{ marginTop: "15px" }}>
+        Already have an account?{" "}
+        <span
+          style={{
+            color: "blue",
+            cursor: "pointer",
+            textDecoration: "underline"
+          }}
+          onClick={() => (window.location.href = "/login")}
+        >
+          Login
+        </span>
+      </p>
     </div>
   );
 }

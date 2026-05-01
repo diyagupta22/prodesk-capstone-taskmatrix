@@ -17,12 +17,13 @@ export default function Login() {
       alert("Login Success ✅");
       window.location.href = "/";
     } catch (err) {
-      alert("Invalid Credentials ❌");
+      const errorMsg = err.response?.data?.error || "Invalid Credentials ❌";
+      alert(errorMsg);
     }
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Login</h2>
 
       <input
@@ -30,17 +31,28 @@ export default function Login() {
         onChange={(e) => setData({ ...data, email: e.target.value })}
       />
 
-      <br /><br />
-
       <input
         type="password"
         placeholder="Password"
         onChange={(e) => setData({ ...data, password: e.target.value })}
       />
 
-      <br /><br />
-
       <button onClick={handleSubmit}>Login</button>
+
+      {/* Register link */}
+      <p style={{ marginTop: "15px" }}>
+        Don't have an account?{" "}
+        <span
+          style={{
+            color: "blue",
+            cursor: "pointer",
+            textDecoration: "underline"
+          }}
+          onClick={() => (window.location.href = "/register")}
+        >
+          Register
+        </span>
+      </p>
     </div>
   );
 }
