@@ -1,5 +1,13 @@
 {
+  "scripts": {
+    "start": "concurrently \"npm --prefix auth-project/backend run dev\" \"npm --prefix auth-project/frontend start\"",
+    "start:backend": "npm --prefix auth-project/backend run dev",
+    "start:frontend": "npm --prefix auth-project/frontend start"
+  },
   "dependencies": {
     "stripe": "^22.1.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }

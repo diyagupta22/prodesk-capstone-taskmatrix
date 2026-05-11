@@ -1,43 +1,58 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { API } from "../api";
+import { AuthContext } from "../AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const { logout: authLogout } = useContext(AuthContext);
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
 
-  // 🔐 Auth check
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      window.location.href = "/login";
+      navigate("/login", { replace: true });
     } else {
       fetchTasks();
     }
-  }, []);
+  }, [navigate]);
 
-  // 📥 Fetch tasks
   const fetchTasks = async () => {
     try {
       const res = await API.get("/tasks");
-      setTasks(res.data);
+
+      // Handle both possible response formats:
+      // 1. res.data = [...]
+      // 2. res.data.tasks = [...]
+      const fetchedTasks = Array.isArray(res.data)
+        ? res.data
+        : Array.isArray(res.data.tasks)
+        ? res.data.tasks
+        : [];
+
+      setTasks(fetchedTasks);
     } catch (err) {
       if (err.response?.status === 401) {
         localStorage.removeItem("token");
         window.location.href = "/login";
       } else {
+        console.error("Fetch tasks error:", err);
         alert("Error fetching tasks ❌");
+        setTasks([]);
       }
     }
   };
 
-  // ➕ Add task
   const addTask = async () => {
     if (!title.trim()) return;
 
     try {
       const res = await API.post("/tasks", { title });
-      setTasks([...tasks, res.data]);
+
+      const newTask = res.data.task || res.data;
+      setTasks([...tasks, newTask]);
       setTitle("");
     } catch (err) {
       if (err.response?.status === 401) {
@@ -49,7 +64,6 @@ export default function Dashboard() {
     }
   };
 
-  // ❌ Delete task
   const deleteTask = async (id) => {
     try {
       await API.delete(`/tasks/${id}`);
@@ -64,7 +78,6 @@ export default function Dashboard() {
     }
   };
 
-  // 💳 Stripe Payment
   const handlePayment = async () => {
     try {
       const res = await API.post("/payment/checkout");
@@ -79,10 +92,9 @@ export default function Dashboard() {
     }
   };
 
-  // 🚪 Logout
   const logout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
+    authLogout();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -91,8 +103,8 @@ export default function Dashboard() {
 
       <button onClick={logout}>Logout</button>
 
-      {/* 💳 Payment Button */}
       <br /><br />
+
       <button onClick={handlePayment}>
         Upgrade to Pro 💳
       </button>
@@ -106,17 +118,21 @@ export default function Dashboard() {
       />
       <button onClick={addTask}>Add</button>
 
-      {tasks.map((t) => (
-        <div key={t._id} style={{ marginTop: "10px" }}>
-          {t.title}
-          <button
-            onClick={() => deleteTask(t._id)}
-            style={{ marginLeft: "10px" }}
-          >
-            Delete
-          </button>
-        </div>
-      ))}
+      {tasks.length === 0 ? (
+        <p style={{ marginTop: "10px" }}>No tasks yet.</p>
+      ) : (
+        tasks.map((t, index) => (
+          <div key={t._id || index} style={{ marginTop: "10px" }}>
+            {t.title || "Untitled Task"}
+            <button
+              onClick={() => deleteTask(t._id)}
+              style={{ marginLeft: "10px" }}
+            >
+              Delete
+            </button>
+          </div>
+        ))
+      )}
     </div>
   );
 }

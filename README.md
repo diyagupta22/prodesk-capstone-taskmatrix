@@ -44,6 +44,18 @@ Tools
 - GitHub (Version Control)
 
 
+🚀 Getting Started
+
+1. Install dependencies for both projects:
+   - `npm install`
+   - `cd auth-project/backend && npm install`
+   - `cd auth-project/frontend && npm install`
+2. Start both servers from the workspace root:
+   - `npm run start`
+3. Open the frontend in your browser:
+   - `http://localhost:3001`
+
+
 🚀 Core Features
 
 🔐 Authentication

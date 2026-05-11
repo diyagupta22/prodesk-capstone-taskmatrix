@@ -8,14 +8,17 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.15.2",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "react-router-dom": "^7.14.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cross-env CHOKIDAR_USEPOLLING=true WATCHPACK_POLLING=true PORT=3001 BROWSER=none NODE_OPTIONS=--no-deprecation react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
