@@ -28,7 +28,10 @@ app.use(helmet());
 // Parse JSON bodies
 app.use(express.json());
 
-// CORS configuration
+// =====================================================
+// 🌐 CORS CONFIGURATION (LOCAL + ALL VERCEL DEPLOYMENTS)
+// =====================================================
+
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -38,14 +41,28 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow Postman, server-to-server requests, and allowed origins
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS not allowed"));
+      // Allow Postman, curl, server-to-server requests
+      if (!origin) {
+        return callback(null, true);
       }
+
+      // Allow localhost and explicitly listed domains
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // Allow ALL Vercel deployments of this project
+      if (
+        origin.includes("prodesk-capstone-taskmatrix") &&
+        origin.endsWith(".vercel.app")
+      ) {
+        return callback(null, true);
+      }
+
+      // Block everything else
+      return callback(new Error("CORS not allowed"));
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
